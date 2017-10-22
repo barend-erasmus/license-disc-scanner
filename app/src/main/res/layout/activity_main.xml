@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.erasmus.barend.licensediscscanner.MainActivity">
+
+    <Button
+        android:id="@+id/btn_scan"
+        android:layout_height="wrap_content"
+        android:layout_width="368dp"
+        android:text="Scan" />
+
+    <TextView
+        android:id="@+id/txt_registration_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Registration Number: " />
+
+    <TextView
+        android:id="@+id/txt_make"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Make: " />
+
+    <TextView
+        android:id="@+id/txt_model"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Model: " />
+</LinearLayout>
