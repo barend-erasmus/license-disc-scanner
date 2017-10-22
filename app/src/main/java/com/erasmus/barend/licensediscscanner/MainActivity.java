@@ -24,6 +24,7 @@ import java.io.IOException;
 
 public class MainActivity extends Activity {
 
+    private Button _btnScan;
     private TextView _txtRegistrationNumber;
     private TextView _txtMake;
     private TextView _txtModel;
@@ -50,12 +51,12 @@ public class MainActivity extends Activity {
 
         }
 
-        Button button = (Button) findViewById(R.id.btn_scan);
+        _btnScan = (Button) findViewById(R.id.btn_scan);
         _txtRegistrationNumber = (TextView) findViewById(R.id.txt_registration_number);
         _txtMake = (TextView) findViewById(R.id.txt_make);
         _txtModel = (TextView) findViewById(R.id.txt_model);
 
-        button.setOnClickListener(new View.OnClickListener() {
+        _btnScan.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 OpenScanner();
             }
@@ -69,39 +70,39 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onActivityResult(final int requestCode, int resultCode, Intent intent) {
+
+            IntentResult intentResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+
+            String contents = intentResult.getContents();
+
+            if (contents == null) {
+                return;
+            }
+
+            File sdCardPath = Environment.getExternalStorageDirectory();
+
+            try {
+                FileOutputStream fileOutputStream = new FileOutputStream(JoinPath(sdCardPath.toString(), "license-disc-scanner.txt"), true);
+
+                LicenseDisc licenseDisc = new LicenseDisc(contents);
+
+                fileOutputStream.write(licenseDisc.toString().getBytes());
+                fileOutputStream.write(System.getProperty("line.separator").getBytes());
+
+                fileOutputStream.flush();
+                fileOutputStream.close();
+
+                _txtRegistrationNumber.setText(String.format("Registration Number: %s", licenseDisc.RegistrationNumber()));
+                _txtMake.setText(String.format("Make: %s", licenseDisc.Make()));
+                _txtModel.setText(String.format("Model: %s", licenseDisc.Model()));
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
         super.onActivityResult(requestCode, resultCode, intent);
-        IntentResult intentResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
-
-        String contents = intentResult.getContents();
-
-        if (contents == null) {
-            return;
-        }
-
-        File sdCardPath = Environment.getExternalStorageDirectory();
-
-        try {
-            FileOutputStream fileOutputStream = new FileOutputStream(JoinPath(sdCardPath.toString(), "license-disc-scanner.txt"), true);
-
-            LicenseDisc licenseDisc = new LicenseDisc(contents);
-
-            fileOutputStream.write(licenseDisc.toString().getBytes());
-            fileOutputStream.write(System.getProperty("line.separator").getBytes());
-
-            fileOutputStream.flush();
-            fileOutputStream.close();
-
-            _txtRegistrationNumber.setText(String.format("Registration Number: %s", licenseDisc.RegistrationNumber()));
-            _txtMake.setText(String.format("Make: %s", licenseDisc.Make()));
-            _txtModel.setText(String.format("Model: %s", licenseDisc.Model()));
-
-        } catch (FileNotFoundException e) {
-            Toast.makeText(MainActivity.this, e.getMessage(),
-                    Toast.LENGTH_LONG).show();
-        } catch (IOException e) {
-            Toast.makeText(MainActivity.this, e.getMessage(),
-                    Toast.LENGTH_LONG).show();
-        }
     }
 
     private void OpenScanner() {

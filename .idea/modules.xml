@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/LicenseDiscScanner.iml" filepath="$PROJECT_DIR$/LicenseDiscScanner.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/license-disc-scanner.iml" filepath="$PROJECT_DIR$/license-disc-scanner.iml" />
     </modules>
   </component>
 </project>
