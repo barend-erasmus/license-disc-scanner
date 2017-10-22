@@ -1,5 +1,7 @@
 package com.erasmus.barend.licensediscscanner.models;
 
+import com.erasmus.barend.licensediscscanner.utilities.CryptoHelper;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -11,20 +13,21 @@ import java.util.Date;
 
 public class LicenseDisc {
 
-    private String _a;
-    private String _b;
-    private String _c;
-    private String _d;
-    private String _controlNumber;
-    private String _registrationNumber;
-    private String _registerNumber;
-    private String _type;
-    private String _make;
-    private String _model;
-    private String _color;
-    private String _vinNumber;
-    private String _engineNumber;
-    private Date _expiryDate;
+    public String _a;
+    public String _b;
+    public String _c;
+    public String _d;
+    public String _controlNumber;
+    public String _registrationNumber;
+    public String _registerNumber;
+    public String _type;
+    public String _make;
+    public String _model;
+    public String _color;
+    public String _vinNumber;
+    public String _engineNumber;
+    public Date _expiryDate;
+    public String _hash;
 
     public LicenseDisc(String raw) {
         String[] splittedRaw = raw.split("%");
@@ -43,18 +46,7 @@ public class LicenseDisc {
         _vinNumber = splittedRaw[12];
         _engineNumber = splittedRaw[13];
         _expiryDate = ToDate(splittedRaw[14]);
-    }
-
-    public String RegistrationNumber() {
-        return _registrationNumber;
-    }
-
-    public String Make() {
-        return _make;
-    }
-
-    public String Model() {
-        return _model;
+        _hash = CryptoHelper.SHA1(raw);
     }
 
     @Override

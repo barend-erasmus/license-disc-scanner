@@ -5,29 +5,66 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:padding="8px"
     tools:context="com.erasmus.barend.licensediscscanner.MainActivity">
 
     <Button
         android:id="@+id/btn_scan"
         android:layout_height="wrap_content"
-        android:layout_width="368dp"
+        android:layout_width="match_parent"
         android:text="Scan" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:text="Scanned Details " />
 
     <TextView
         android:id="@+id/txt_registration_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Registration Number: " />
+        android:text="Registration Number: No Information" />
 
     <TextView
         android:id="@+id/txt_make"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Make: " />
+        android:text="Make: No Information" />
 
     <TextView
         android:id="@+id/txt_model"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Model: " />
+        android:text="Model: No Information" />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="2dip"
+        android:background="#FF00FF00" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:text="Statistics" />
+
+    <TextView
+        android:id="@+id/txt_statistics_number_of_scans"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Number of Scans: " />
+
+    <Button
+        android:id="@+id/btn_upload"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:enabled="false"
+        android:text="Upload" />
+
+    <Button
+        android:id="@+id/btn_export_database"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:text="Export Database" />
 </LinearLayout>
