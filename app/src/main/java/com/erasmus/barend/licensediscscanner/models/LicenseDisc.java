@@ -13,45 +13,84 @@ import java.util.Date;
 
 public class LicenseDisc {
 
-    public String _a;
-    public String _b;
-    public String _c;
-    public String _d;
-    public String _controlNumber;
-    public String _registrationNumber;
-    public String _registerNumber;
-    public String _type;
-    public String _make;
-    public String _model;
-    public String _color;
-    public String _vinNumber;
-    public String _engineNumber;
-    public Date _expiryDate;
-    public String _hash;
+    public String a;
+    public String b;
+    public String c;
+    public String d;
+    public String controlNumber;
+    public String registrationNumber;
+    public String registerNumber;
+    public String type;
+    public String make;
+    public String model;
+    public String color;
+    public String vinNumber;
+    public String engineNumber;
+    public Date expiryDate;
+    public String hash;
+
+    public Date timestamp;
+    public String deviceId;
+
+    public LicenseDisc(
+            String a,
+            String b,
+            String c,
+            String d,
+            String controlNumber,
+            String registrationNumber,
+            String registerNumber,
+            String type,
+            String make,
+            String model,
+            String color,
+            String vinNumber,
+            String engineNumber,
+            Date expiryDate,
+            String hash,
+            Date timestamp
+    ) {
+        this.a = a;
+        this.b = b;
+        this.c = c;
+        this.d = d;
+        this.controlNumber = controlNumber;
+        this.registrationNumber = registrationNumber;
+        this.registerNumber = registerNumber;
+        this.type = type;
+        this.make = make;
+        this.model = model;
+        this.color = color;
+        this.vinNumber = vinNumber;
+        this.engineNumber = engineNumber;
+        this.expiryDate = expiryDate;
+        this.hash = hash;
+        this.timestamp = timestamp;
+    }
 
     public LicenseDisc(String raw) {
         String[] splittedRaw = raw.split("%");
 
-        _a = splittedRaw[1];
-        _b = splittedRaw[2];
-        _c = splittedRaw[3];
-        _d = splittedRaw[4];
-        _controlNumber = splittedRaw[5];
-        _registrationNumber = splittedRaw[6];
-        _registerNumber = splittedRaw[7];
-        _type = splittedRaw[8];
-        _make = splittedRaw[9];
-        _model = splittedRaw[10];
-        _color = splittedRaw[11];
-        _vinNumber = splittedRaw[12];
-        _engineNumber = splittedRaw[13];
-        _expiryDate = ToDate(splittedRaw[14]);
-        _hash = CryptoHelper.SHA1(raw);
+        a = splittedRaw[1];
+        b = splittedRaw[2];
+        c = splittedRaw[3];
+        d = splittedRaw[4];
+        controlNumber = splittedRaw[5];
+        registrationNumber = splittedRaw[6];
+        registerNumber = splittedRaw[7];
+        type = splittedRaw[8];
+        make = splittedRaw[9];
+        model = splittedRaw[10];
+        color = splittedRaw[11];
+        vinNumber = splittedRaw[12];
+        engineNumber = splittedRaw[13];
+        expiryDate = ToDate(splittedRaw[14]);
+        hash = CryptoHelper.SHA1(raw);
     }
 
     @Override
     public String toString() {
-        return _controlNumber + ";" + _registrationNumber + ";" + _registerNumber + ";" + _type + ";" + _make + ";" + _model + ";" + _color + ";" + _vinNumber + ";" + _engineNumber + ";" + _expiryDate.toString();
+        return controlNumber + ";" + registrationNumber + ";" + registerNumber + ";" + type + ";" + make + ";" + model + ";" + color + ";" + vinNumber + ";" + engineNumber + ";" + expiryDate.toString();
     }
 
     private Date ToDate(String str) {
