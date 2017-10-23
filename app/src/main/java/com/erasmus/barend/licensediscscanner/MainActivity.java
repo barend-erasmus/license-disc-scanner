@@ -92,7 +92,8 @@ public class MainActivity extends ServiceActivity {
                 requestPermissions(new String[]{
                         Manifest.permission.CAMERA,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        Manifest.permission.READ_EXTERNAL_STORAGE
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.READ_PHONE_STATE
                 }, 0);
             }
         }

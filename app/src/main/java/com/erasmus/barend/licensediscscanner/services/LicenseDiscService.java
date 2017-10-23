@@ -15,9 +15,11 @@ import com.erasmus.barend.licensediscscanner.repositories.BaseRepository;
 import com.erasmus.barend.licensediscscanner.repositories.LicenseDiscRepository;
 import com.erasmus.barend.licensediscscanner.utilities.FileHelper;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.google.zxing.integration.android.IntentIntegrator;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -110,23 +112,17 @@ public class LicenseDiscService {
 
     private void UploadDatabase() {
 
-        TelephonyManager telephonyManager = (TelephonyManager)_context.getSystemService(Context.TELEPHONY_SERVICE);
+        TelephonyManager telephonyManager = (TelephonyManager) _context.getSystemService(Context.TELEPHONY_SERVICE);
         String deviceId = telephonyManager.getDeviceId();
 
         Gson gson = new Gson();
 
-        List<LicenseDisc> licenseDiscs = _licenseDiscRepository.List();
+        List<LicenseDisc> licenseDiscs = _licenseDiscRepository.List(deviceId);
 
-        String json = gson.toJson(licenseDiscs.get(0), LicenseDisc.class);
-        Toast.makeText(_context, json,
-                Toast.LENGTH_LONG).show();
 
-        // _serviceActivity.Post(json, "http://192.168.1.74:3000/licenseDiscs/create", 100);
-
-        // for (LicenseDisc licenseDisc: licenseDiscs) {
-            // String json = gson.toJson(licenseDisc, LicenseDisc.class);
-            // _serviceActivity.Post(json, "http://192.168.1.74:3000/licenseDiscs/create", 100);
-        // }
+        String json = gson.toJson(licenseDiscs, new TypeToken<List<LicenseDisc>>() {
+        }.getType());
+        _serviceActivity.Post(json, "http://192.168.1.74:3000/licenseDiscs/create", 100);
     }
 
     private void ConfigureOnClickListeners() {

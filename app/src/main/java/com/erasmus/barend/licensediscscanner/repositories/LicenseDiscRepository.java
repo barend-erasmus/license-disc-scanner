@@ -85,7 +85,7 @@ public class LicenseDiscRepository extends BaseRepository {
         }
     }
 
-    public List<LicenseDisc> List() {
+    public List<LicenseDisc> List(String deviceId) {
 
         if (_readableDatabase == null) {
             _readableDatabase = getReadableDatabase();
@@ -116,6 +116,8 @@ public class LicenseDiscRepository extends BaseRepository {
                         cursor.getString(cursor.getColumnIndex(LicenseDiscEntry.COLUMN_NAME_HASH)),
                         new Date(cursor.getLong(cursor.getColumnIndex(LicenseDiscEntry.COLUMN_NAME_TIMESTAMP)))
                 );
+
+                licenseDisc.deviceId = deviceId;
 
                 result.add(licenseDisc);
             } while (cursor.moveToNext());

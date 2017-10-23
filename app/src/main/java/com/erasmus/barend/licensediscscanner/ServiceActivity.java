@@ -11,17 +11,13 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.protocol.HTTP;
-import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.view.Menu;
-import android.view.MenuItem;
 
 /**
  * Created by Barend Erasmus on 10/23/2017.
