@@ -41,7 +41,7 @@
     <View
         android:layout_width="fill_parent"
         android:layout_height="2dip"
-        android:background="#FF00FF00" />
+        android:background="#909090" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -66,4 +66,10 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:text="Export Database" />
+
+    <Button
+        android:id="@+id/btn_restore_seed_database"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:text="Restore Seed Database" />
 </LinearLayout>

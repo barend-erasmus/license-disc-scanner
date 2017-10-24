@@ -1,6 +1,7 @@
 package com.erasmus.barend.licensediscscanner;
 
 import java.io.InputStream;
+import java.security.KeyStore;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;

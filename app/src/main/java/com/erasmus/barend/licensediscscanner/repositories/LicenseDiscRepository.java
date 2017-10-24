@@ -85,12 +85,49 @@ public class LicenseDiscRepository extends BaseRepository {
         }
     }
 
-    public List<LicenseDisc> List(String deviceId) {
+    public LicenseDisc FindLast() {
 
         if (_readableDatabase == null) {
             _readableDatabase = getReadableDatabase();
         }
 
+
+        Cursor cursor = _readableDatabase.query(LicenseDiscEntry.TABLE_NAME, null, null, null, null, null, "timestamp DESC", "1");
+
+        int count = cursor.getCount();
+
+        if (cursor.moveToFirst()) {
+            LicenseDisc licenseDisc = new LicenseDisc(
+                    cursor.getString(cursor.getColumnIndex(LicenseDiscEntry.COLUMN_NAME_A)),
+                    cursor.getString(cursor.getColumnIndex(LicenseDiscEntry.COLUMN_NAME_B)),
+                    cursor.getString(cursor.getColumnIndex(LicenseDiscEntry.COLUMN_NAME_C)),
+                    cursor.getString(cursor.getColumnIndex(LicenseDiscEntry.COLUMN_NAME_D)),
+                    cursor.getString(cursor.getColumnIndex(LicenseDiscEntry.COLUMN_NAME_CONTROL_NUMBER)),
+                    cursor.getString(cursor.getColumnIndex(LicenseDiscEntry.COLUMN_NAME_REGISTRATION_NUMBER)),
+                    cursor.getString(cursor.getColumnIndex(LicenseDiscEntry.COLUMN_NAME_REGISTER_NUMBER)),
+                    cursor.getString(cursor.getColumnIndex(LicenseDiscEntry.COLUMN_NAME_TYPE)),
+                    cursor.getString(cursor.getColumnIndex(LicenseDiscEntry.COLUMN_NAME_MAKE)),
+                    cursor.getString(cursor.getColumnIndex(LicenseDiscEntry.COLUMN_NAME_MODEL)),
+                    cursor.getString(cursor.getColumnIndex(LicenseDiscEntry.COLUMN_NAME_COLOR)),
+                    cursor.getString(cursor.getColumnIndex(LicenseDiscEntry.COLUMN_NAME_VIN_NUMBER)),
+                    cursor.getString(cursor.getColumnIndex(LicenseDiscEntry.COLUMN_NAME_ENGINE_NUMBER)),
+                    new Date(cursor.getLong(cursor.getColumnIndex(LicenseDiscEntry.COLUMN_NAME_EXPIRY_DATE))),
+                    cursor.getString(cursor.getColumnIndex(LicenseDiscEntry.COLUMN_NAME_HASH)),
+                    new Date(cursor.getLong(cursor.getColumnIndex(LicenseDiscEntry.COLUMN_NAME_TIMESTAMP)))
+            );
+
+            return licenseDisc;
+        }else {
+            return null;
+        }
+
+    }
+
+    public List<LicenseDisc> List(String deviceId) {
+
+        if (_readableDatabase == null) {
+            _readableDatabase = getReadableDatabase();
+        }
 
         Cursor cursor = _readableDatabase.query(LicenseDiscEntry.TABLE_NAME, null, null, null, null, null, null);
 
@@ -128,6 +165,10 @@ public class LicenseDiscRepository extends BaseRepository {
     }
 
     public long NumberOfScans() {
+        if (_readableDatabase == null) {
+            _readableDatabase = getReadableDatabase();
+        }
+
         return DatabaseUtils.queryNumEntries(_readableDatabase, LicenseDiscEntry.TABLE_NAME);
     }
 

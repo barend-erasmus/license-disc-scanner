@@ -18,7 +18,6 @@ import com.erasmus.barend.licensediscscanner.repositories.BaseRepository;
 import com.erasmus.barend.licensediscscanner.repositories.LicenseDiscRepository;
 import com.erasmus.barend.licensediscscanner.services.LicenseDiscService;
 import com.erasmus.barend.licensediscscanner.utilities.FileHelper;
-import com.google.zxing.client.android.CaptureActivity;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -42,6 +41,7 @@ public class MainActivity extends ServiceActivity {
         Button btnScan = (Button) findViewById(R.id.btn_scan);
         Button btnExportDatabase = (Button) findViewById(R.id.btn_export_database);
         Button btnUpload = (Button) findViewById(R.id.btn_upload);
+        Button btnRestoreSeedDatabase = (Button) findViewById(R.id.btn_restore_seed_database);
         TextView txtRegistrationNumber = (TextView) findViewById(R.id.txt_registration_number);
         TextView txtMake = (TextView) findViewById(R.id.txt_make);
         TextView txtModel = (TextView) findViewById(R.id.txt_model);
@@ -50,7 +50,7 @@ public class MainActivity extends ServiceActivity {
         LicenseDiscRepository licenseDiscRepository = new LicenseDiscRepository(MainActivity.this);
 
         _licenseDiscService = new LicenseDiscService(MainActivity.this, MainActivity.this, licenseDiscRepository, btnScan,
-                btnExportDatabase, btnUpload, txtRegistrationNumber, txtMake, txtModel, txtStatisticsNumberOfScans);
+                btnExportDatabase, btnUpload, btnRestoreSeedDatabase, txtRegistrationNumber, txtMake, txtModel, txtStatisticsNumberOfScans);
     }
 
     @Override
@@ -87,13 +87,17 @@ public class MainActivity extends ServiceActivity {
             if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
                     checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
                     checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
-                    checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+                    checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED ||
+                    checkSelfPermission(Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED ||
+                    checkSelfPermission(Manifest.permission.ACCESS_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED) {
 
                 requestPermissions(new String[]{
                         Manifest.permission.CAMERA,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE,
                         Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.READ_PHONE_STATE
+                        Manifest.permission.READ_PHONE_STATE,
+                        Manifest.permission.INTERNET,
+                        Manifest.permission.ACCESS_NETWORK_STATE
                 }, 0);
             }
         }

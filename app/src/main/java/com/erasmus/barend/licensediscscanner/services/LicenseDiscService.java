@@ -19,6 +19,10 @@ import com.google.gson.reflect.TypeToken;
 import com.google.zxing.integration.android.IntentIntegrator;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -35,12 +39,15 @@ public class LicenseDiscService {
     private Button _btnScan;
     private Button _btnExportDatabase;
     private Button _btnUpload;
+    private Button _btnRestoreSeedDatabase;
     private TextView _txtRegistrationNumber;
     private TextView _txtMake;
     private TextView _txtModel;
     private TextView _txtStatisticsNumberOfScans;
 
     private LicenseDiscRepository _licenseDiscRepository;
+
+    private final int UPLOAD_RESULT_CODE = 6650;
 
     public LicenseDiscService(
             ServiceActivity serviceActivity,
@@ -49,6 +56,7 @@ public class LicenseDiscService {
             Button btnScan,
             Button btnExportDatabase,
             Button btnUpload,
+            Button btnRestoreSeedDatabase,
             TextView txtRegistrationNumber,
             TextView txtMake,
             TextView txtModel,
@@ -60,6 +68,7 @@ public class LicenseDiscService {
         _btnScan = btnScan;
         _btnExportDatabase = btnExportDatabase;
         _btnUpload = btnUpload;
+        _btnRestoreSeedDatabase = btnRestoreSeedDatabase;
         _txtMake = txtMake;
         _txtModel = txtModel;
         _txtRegistrationNumber = txtRegistrationNumber;
@@ -68,6 +77,13 @@ public class LicenseDiscService {
         ConfigureOnClickListeners();
 
         UpdateNumberOfScans();
+
+        LicenseDisc licenseDisc = _licenseDiscRepository.FindLast();
+        if (licenseDisc != null) {
+            _txtRegistrationNumber.setText(String.format("Registration Number: %s", licenseDisc.registrationNumber));
+            _txtMake.setText(String.format("Make: %s", licenseDisc.make));
+            _txtModel.setText(String.format("Model: %s", licenseDisc.model));
+        }
     }
 
     public void ProcessScan(String contents) {
@@ -87,7 +103,10 @@ public class LicenseDiscService {
     }
 
     public void OnHTTPResponse(String content, int resultCode) {
-
+        if (resultCode == UPLOAD_RESULT_CODE) {
+            Toast.makeText(_context, "Successfully uploaded database.",
+                    Toast.LENGTH_LONG).show();
+        }
     }
 
     public void CloseDatabase() {
@@ -119,10 +138,28 @@ public class LicenseDiscService {
 
         List<LicenseDisc> licenseDiscs = _licenseDiscRepository.List(deviceId);
 
-
         String json = gson.toJson(licenseDiscs, new TypeToken<List<LicenseDisc>>() {
         }.getType());
-        _serviceActivity.Post(json, "http://192.168.1.74:3000/licenseDiscs/create", 100);
+        _serviceActivity.Post(json, "https://license-disc-scanner.openservices.co.za/licenseDiscs/create", UPLOAD_RESULT_CODE);
+    }
+
+    private void RestoreSeedDatabase() {
+        File internalDatabaseFile = _context.getDatabasePath(BaseRepository.DATABASE_NAME);
+
+        try (InputStream initialDatabaseInputStream = _context.getAssets().open("license-disc-scanner.db")) {
+            FileHelper.Copy(initialDatabaseInputStream, internalDatabaseFile);
+
+            Toast.makeText(_context, "Successfully restored seed database.",
+                    Toast.LENGTH_LONG).show();
+
+            _licenseDiscRepository.Close();
+            _licenseDiscRepository = new LicenseDiscRepository(_context);
+
+            UpdateNumberOfScans();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void ConfigureOnClickListeners() {
@@ -142,6 +179,12 @@ public class LicenseDiscService {
         _btnUpload.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 UploadDatabase();
+            }
+        });
+
+        _btnRestoreSeedDatabase.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                RestoreSeedDatabase();
             }
         });
     }
