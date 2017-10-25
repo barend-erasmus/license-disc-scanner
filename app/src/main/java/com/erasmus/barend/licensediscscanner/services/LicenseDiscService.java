@@ -96,6 +96,7 @@ public class LicenseDiscService {
                     Toast.LENGTH_LONG).show();
         } else {
             _licenseDiscRepository.Insert(licenseDisc);
+            _hashRepository.Insert(licenseDisc.hash);
             UpdateNumberOfScans();
         }
     }
