@@ -64,21 +64,7 @@ public abstract class ServiceActivity extends Activity {
                         public void run() {
                             progress.dismiss();
 
-                            AlertDialog.Builder builder = new AlertDialog.Builder(
-                                    ServiceActivity.this);
-                            builder.setTitle("Uh oh!");
-                            builder.setMessage("An error occurred, please try again later.");
-                            builder.setCancelable(true);
-                            builder.setNeutralButton("OK",
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(
-                                                DialogInterface dialog, int id) {
-                                            dialog.cancel();
-                                        }
-                                    });
-
-                            AlertDialog alert = builder.create();
-                            alert.show();
+                            ShowDialog("Uh oh!", "An error occurred, please try again later.");
                         }
                     });
 
@@ -131,21 +117,7 @@ public abstract class ServiceActivity extends Activity {
                         public void run() {
                             progress.dismiss();
 
-                            AlertDialog.Builder builder = new AlertDialog.Builder(
-                                    ServiceActivity.this);
-                            builder.setTitle("Uh oh!");
-                            builder.setMessage("An error occurred, please try again later.");
-                            builder.setCancelable(true);
-                            builder.setNeutralButton("OK",
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(
-                                                DialogInterface dialog, int id) {
-                                            dialog.cancel();
-                                        }
-                                    });
-
-                            AlertDialog alert = builder.create();
-                            alert.show();
+                            ShowDialog("Uh oh!", "An error occurred, please try again later.");
                         }
                     });
 
@@ -162,10 +134,10 @@ public abstract class ServiceActivity extends Activity {
         return s.hasNext() ? s.next() : "";
     }
 
-    public void ShowDialog(String Message) {
+    public void ShowDialog(String title, String Message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(
                 ServiceActivity.this);
-        builder.setTitle("Error");
+        builder.setTitle(title);
         builder.setMessage(Message);
         builder.setCancelable(true);
         builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {

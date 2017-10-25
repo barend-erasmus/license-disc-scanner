@@ -73,4 +73,10 @@
         android:layout_width="match_parent"
         android:text="Download Hashes" />
 
+    <Button
+        android:id="@+id/btn_about"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:text="About" />
+
 </LinearLayout>

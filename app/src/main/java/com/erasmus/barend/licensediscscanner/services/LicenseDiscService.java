@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.erasmus.barend.licensediscscanner.MainActivity;
 import com.erasmus.barend.licensediscscanner.ServiceActivity;
 import com.erasmus.barend.licensediscscanner.models.LicenseDisc;
 import com.erasmus.barend.licensediscscanner.repositories.HashRepository;
@@ -28,6 +29,7 @@ public class LicenseDiscService {
     private Button _btnScan;
     private Button _btnUploadLicenseDiscs;
     private Button _btnDownloadHashes;
+    private Button _btnAbout;
     private TextView _txtDeviceId;
     private TextView _txtRegistrationNumber;
     private TextView _txtMake;
@@ -40,6 +42,8 @@ public class LicenseDiscService {
     private final int UPLOAD_LICENSE_DISCS_RESULT_CODE = 6650;
     private final int DOWNLOAD_HASHES_RESULT_CODE = 5675;
 
+    private final String VERSION = "1.4.2";
+
     public LicenseDiscService(
             ServiceActivity serviceActivity,
             Context context,
@@ -48,6 +52,7 @@ public class LicenseDiscService {
             Button btnScan,
             Button btnUploadLicenseDiscs,
             Button btnDownloadHashes,
+            Button btnAbout,
             TextView txtDeviceId,
             TextView txtRegistrationNumber,
             TextView txtMake,
@@ -61,6 +66,7 @@ public class LicenseDiscService {
         _btnScan = btnScan;
         _btnUploadLicenseDiscs = btnUploadLicenseDiscs;
         _btnDownloadHashes = btnDownloadHashes;
+        _btnAbout = btnAbout;
         _txtDeviceId = txtDeviceId;
         _txtMake = txtMake;
         _txtModel = txtModel;
@@ -92,8 +98,7 @@ public class LicenseDiscService {
         _txtModel.setText(String.format("Model: %s", licenseDisc.model));
 
         if (_hashRepository.Exist(licenseDisc.hash)) {
-            Toast.makeText(_context, "License Disc already exists.",
-                    Toast.LENGTH_LONG).show();
+            _serviceActivity.ShowDialog("Oops!", "License Disc already exists.");
         } else {
             _licenseDiscRepository.Insert(licenseDisc);
             _hashRepository.Insert(licenseDisc.hash);
@@ -110,8 +115,7 @@ public class LicenseDiscService {
                 _licenseDiscRepository.MarkAsUploaded(licenseDisc.hash);
             }
 
-            Toast.makeText(_context, "Successfully uploaded license discs.",
-                    Toast.LENGTH_LONG).show();
+            _serviceActivity.ShowDialog("Success!", "Successfully uploaded license discs.");
         }
 
         if (resultCode == DOWNLOAD_HASHES_RESULT_CODE) {
@@ -125,8 +129,7 @@ public class LicenseDiscService {
                 }
             }
 
-            Toast.makeText(_context, "Successfully downloaded hashes.",
-                    Toast.LENGTH_LONG).show();
+            _serviceActivity.ShowDialog("Success!", "Successfully downloaded hashes.");
 
             UpdateNumberOfScans();
         }
@@ -180,6 +183,12 @@ public class LicenseDiscService {
         _btnDownloadHashes.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 DownloadHashes();
+            }
+        });
+
+        _btnAbout.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                _serviceActivity.ShowDialog("About", String.format("Developer's Workspace PTY LTD\r\nBarend Erasmus\r\n%s", VERSION));
             }
         });
     }

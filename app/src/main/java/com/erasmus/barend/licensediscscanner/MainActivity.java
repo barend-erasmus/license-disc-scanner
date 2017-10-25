@@ -28,6 +28,7 @@ public class MainActivity extends ServiceActivity {
         Button btnScan = (Button) findViewById(R.id.btn_scan);
         Button btnDownloadHashes = (Button) findViewById(R.id.btn_download_hashes);
         Button btnUploadLicenseDiscs = (Button) findViewById(R.id.btn_upload_license_discs);
+        Button btnAbout = (Button) findViewById(R.id.btn_about);
         TextView txtDeviceId = (TextView) findViewById(R.id.txt_device_id);
         TextView txtRegistrationNumber = (TextView) findViewById(R.id.txt_registration_number);
         TextView txtMake = (TextView) findViewById(R.id.txt_make);
@@ -37,7 +38,20 @@ public class MainActivity extends ServiceActivity {
         LicenseDiscRepository licenseDiscRepository = new LicenseDiscRepository(MainActivity.this);
         HashRepository hashRepository = new HashRepository(MainActivity.this);
 
-        _licenseDiscService = new LicenseDiscService(MainActivity.this, MainActivity.this, licenseDiscRepository, hashRepository, btnScan, btnUploadLicenseDiscs, btnDownloadHashes, txtDeviceId, txtRegistrationNumber, txtMake, txtModel, txtStatisticsNumberOfScans);
+        _licenseDiscService = new LicenseDiscService(
+                MainActivity.this,
+                MainActivity.this,
+                licenseDiscRepository,
+                hashRepository,
+                btnScan,
+                btnUploadLicenseDiscs,
+                btnDownloadHashes,
+                btnAbout,
+                txtDeviceId,
+                txtRegistrationNumber,
+                txtMake,
+                txtModel,
+                txtStatisticsNumberOfScans);
     }
 
     @Override
@@ -71,19 +85,13 @@ public class MainActivity extends ServiceActivity {
     private void CheckPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
-                    checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
-                    checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
-                    checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED ||
                     checkSelfPermission(Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED ||
-                    checkSelfPermission(Manifest.permission.ACCESS_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED) {
+                    checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
 
                 requestPermissions(new String[]{
                         Manifest.permission.CAMERA,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.READ_PHONE_STATE,
                         Manifest.permission.INTERNET,
-                        Manifest.permission.ACCESS_NETWORK_STATE
+                        Manifest.permission.READ_PHONE_STATE,
                 }, 0);
             }
         }
