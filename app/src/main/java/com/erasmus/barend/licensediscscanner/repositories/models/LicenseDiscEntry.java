@@ -26,12 +26,13 @@ public final class LicenseDiscEntry implements BaseColumns {
                     LicenseDiscEntry.COLUMN_NAME_ENGINE_NUMBER + " TEXT," +
                     LicenseDiscEntry.COLUMN_NAME_EXPIRY_DATE + " NUMERIC," +
                     LicenseDiscEntry.COLUMN_NAME_HASH + " TEXT," +
+                    LicenseDiscEntry.COLUMN_NAME_UPLOADED + " NUMERIC," +
                     LicenseDiscEntry.COLUMN_NAME_TIMESTAMP + " NUMERIC)";
 
     public static final String DROP_TABLE =
             "DROP TABLE IF EXISTS " + LicenseDiscEntry.TABLE_NAME;
 
-    public static final String TABLE_NAME = "licenseDisc";
+    public static final String TABLE_NAME = "licenseDiscEntry";
     public static final String COLUMN_NAME_A = "a";
     public static final String COLUMN_NAME_B = "b";
     public static final String COLUMN_NAME_C = "c";
@@ -47,5 +48,6 @@ public final class LicenseDiscEntry implements BaseColumns {
     public static final String COLUMN_NAME_ENGINE_NUMBER = "engineNumber";
     public static final String COLUMN_NAME_EXPIRY_DATE = "expiryDate";
     public static final String COLUMN_NAME_HASH = "hash";
+    public static final String COLUMN_NAME_UPLOADED = "uploaded";
     public static final String COLUMN_NAME_TIMESTAMP = "timestamp";
 }

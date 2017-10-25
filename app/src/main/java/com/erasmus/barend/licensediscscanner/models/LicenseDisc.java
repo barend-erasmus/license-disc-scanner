@@ -28,7 +28,6 @@ public class LicenseDisc {
     public String engineNumber;
     public Date expiryDate;
     public String hash;
-
     public Date timestamp;
     public String deviceId;
 

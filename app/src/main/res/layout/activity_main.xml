@@ -15,6 +15,12 @@
         android:text="Scan" />
 
     <TextView
+        android:id="@+id/txt_device_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Device Id: " />
+
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="18sp"
@@ -56,20 +62,15 @@
         android:text="Number of Scans: " />
 
     <Button
-        android:id="@+id/btn_upload"
+        android:id="@+id/btn_upload_license_discs"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:text="Upload" />
+        android:text="Upload License Discs" />
 
     <Button
-        android:id="@+id/btn_export_database"
+        android:id="@+id/btn_download_hashes"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:text="Export Database" />
+        android:text="Download Hashes" />
 
-    <Button
-        android:id="@+id/btn_restore_seed_database"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:text="Restore Seed Database" />
 </LinearLayout>

@@ -52,37 +52,31 @@ public class LicenseDiscRepository extends BaseRepository {
         values.put(LicenseDiscEntry.COLUMN_NAME_ENGINE_NUMBER, licenseDisc.engineNumber);
         values.put(LicenseDiscEntry.COLUMN_NAME_EXPIRY_DATE, licenseDisc.expiryDate.getTime());
         values.put(LicenseDiscEntry.COLUMN_NAME_HASH, licenseDisc.hash);
+        values.put(LicenseDiscEntry.COLUMN_NAME_UPLOADED, false);
         values.put(LicenseDiscEntry.COLUMN_NAME_TIMESTAMP, new Date().getTime());
 
         long rowId = _writableDatabase.insert(LicenseDiscEntry.TABLE_NAME, null, values);
 
     }
 
-    public boolean Exist(String hash) {
+    public void MarkAsUploaded(String hash) {
 
-        if (_readableDatabase == null) {
-            _readableDatabase = getReadableDatabase();
+        if (_writableDatabase == null) {
+            _writableDatabase = getWritableDatabase();
         }
 
-        String[] projection = new String[]{
-                LicenseDiscEntry.COLUMN_NAME_HASH
-        };
+        ContentValues values = new ContentValues();
+        values.put(LicenseDiscEntry.COLUMN_NAME_UPLOADED, true);
 
-        String filter = LicenseDiscEntry.COLUMN_NAME_HASH + " = ?";
+        String selection = LicenseDiscEntry.COLUMN_NAME_HASH + " = ?";
+        String[] selectionArgs = { hash };
 
-        String[] filterArgs = new String[]{
-                hash
-        };
+        int count = _writableDatabase.update(
+                LicenseDiscEntry.TABLE_NAME,
+                values,
+                selection,
+                selectionArgs);
 
-        Cursor cursor = _readableDatabase.query(LicenseDiscEntry.TABLE_NAME, projection, filter, filterArgs, null, null, null);
-
-        int count = cursor.getCount();
-
-        if (count == 0) {
-            return false;
-        } else {
-            return true;
-        }
     }
 
     public LicenseDisc FindLast() {
@@ -90,7 +84,6 @@ public class LicenseDiscRepository extends BaseRepository {
         if (_readableDatabase == null) {
             _readableDatabase = getReadableDatabase();
         }
-
 
         Cursor cursor = _readableDatabase.query(LicenseDiscEntry.TABLE_NAME, null, null, null, null, null, "timestamp DESC", "1");
 
@@ -129,7 +122,10 @@ public class LicenseDiscRepository extends BaseRepository {
             _readableDatabase = getReadableDatabase();
         }
 
-        Cursor cursor = _readableDatabase.query(LicenseDiscEntry.TABLE_NAME, null, null, null, null, null, null);
+        String selection = LicenseDiscEntry.COLUMN_NAME_UPLOADED + " = ?";
+        String[] selectionArgs = { "0" };
+
+        Cursor cursor = _readableDatabase.query(LicenseDiscEntry.TABLE_NAME, null, selection, selectionArgs, null, null, null);
 
         List<LicenseDisc> result = new ArrayList<LicenseDisc>();
 
@@ -159,7 +155,6 @@ public class LicenseDiscRepository extends BaseRepository {
                 result.add(licenseDisc);
             } while (cursor.moveToNext());
         }
-
 
         return result;
     }

@@ -1,7 +1,11 @@
 package com.erasmus.barend.licensediscscanner;
 
-import java.io.InputStream;
-import java.security.KeyStore;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.os.Handler;
+import android.os.Looper;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -13,12 +17,7 @@ import org.apache.http.message.BasicHeader;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.protocol.HTTP;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
-import android.os.Handler;
-import android.os.Looper;
+import java.io.InputStream;
 
 /**
  * Created by Barend Erasmus on 10/23/2017.
@@ -42,7 +41,6 @@ public abstract class ServiceActivity extends Activity {
                 HttpResponse response;
                 try {
                     HttpGet get = new HttpGet(url);
-                    // get.addHeader("Token", Constants.API_Token);
 
                     response = client.execute(get);
 
@@ -68,8 +66,8 @@ public abstract class ServiceActivity extends Activity {
 
                             AlertDialog.Builder builder = new AlertDialog.Builder(
                                     ServiceActivity.this);
-                            builder.setTitle("Error");
-                            builder.setMessage(e.getMessage());
+                            builder.setTitle("Uh oh!");
+                            builder.setMessage("An error occurred, please try again later.");
                             builder.setCancelable(true);
                             builder.setNeutralButton("OK",
                                     new DialogInterface.OnClickListener() {
@@ -106,7 +104,6 @@ public abstract class ServiceActivity extends Activity {
                 HttpResponse response;
                 try {
                     HttpPost post = new HttpPost(url);
-                    // post.addHeader("Token", Constants.API_Token);
 
                     StringEntity se = new StringEntity(json);
                     se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE,
@@ -136,8 +133,8 @@ public abstract class ServiceActivity extends Activity {
 
                             AlertDialog.Builder builder = new AlertDialog.Builder(
                                     ServiceActivity.this);
-                            builder.setTitle("Error");
-                            builder.setMessage(e.getMessage());
+                            builder.setTitle("Uh oh!");
+                            builder.setMessage("An error occurred, please try again later.");
                             builder.setCancelable(true);
                             builder.setNeutralButton("OK",
                                     new DialogInterface.OnClickListener() {

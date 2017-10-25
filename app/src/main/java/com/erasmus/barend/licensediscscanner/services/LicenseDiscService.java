@@ -1,6 +1,5 @@
 package com.erasmus.barend.licensediscscanner.services;
 
-import android.app.Activity;
 import android.content.Context;
 import android.telephony.TelephonyManager;
 import android.view.View;
@@ -8,24 +7,14 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.erasmus.barend.licensediscscanner.MainActivity;
 import com.erasmus.barend.licensediscscanner.ServiceActivity;
 import com.erasmus.barend.licensediscscanner.models.LicenseDisc;
-import com.erasmus.barend.licensediscscanner.repositories.BaseRepository;
+import com.erasmus.barend.licensediscscanner.repositories.HashRepository;
 import com.erasmus.barend.licensediscscanner.repositories.LicenseDiscRepository;
-import com.erasmus.barend.licensediscscanner.utilities.FileHelper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.zxing.integration.android.IntentIntegrator;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -37,26 +26,29 @@ public class LicenseDiscService {
     private ServiceActivity _serviceActivity;
     private Context _context;
     private Button _btnScan;
-    private Button _btnExportDatabase;
-    private Button _btnUpload;
-    private Button _btnRestoreSeedDatabase;
+    private Button _btnUploadLicenseDiscs;
+    private Button _btnDownloadHashes;
+    private TextView _txtDeviceId;
     private TextView _txtRegistrationNumber;
     private TextView _txtMake;
     private TextView _txtModel;
     private TextView _txtStatisticsNumberOfScans;
 
     private LicenseDiscRepository _licenseDiscRepository;
+    private HashRepository _hashRepository;
 
-    private final int UPLOAD_RESULT_CODE = 6650;
+    private final int UPLOAD_LICENSE_DISCS_RESULT_CODE = 6650;
+    private final int DOWNLOAD_HASHES_RESULT_CODE = 5675;
 
     public LicenseDiscService(
             ServiceActivity serviceActivity,
             Context context,
             LicenseDiscRepository licenseDiscRepository,
+            HashRepository hashRepository,
             Button btnScan,
-            Button btnExportDatabase,
-            Button btnUpload,
-            Button btnRestoreSeedDatabase,
+            Button btnUploadLicenseDiscs,
+            Button btnDownloadHashes,
+            TextView txtDeviceId,
             TextView txtRegistrationNumber,
             TextView txtMake,
             TextView txtModel,
@@ -65,10 +57,11 @@ public class LicenseDiscService {
         _serviceActivity = serviceActivity;
         _context = context;
         _licenseDiscRepository = licenseDiscRepository;
+        _hashRepository = hashRepository;
         _btnScan = btnScan;
-        _btnExportDatabase = btnExportDatabase;
-        _btnUpload = btnUpload;
-        _btnRestoreSeedDatabase = btnRestoreSeedDatabase;
+        _btnUploadLicenseDiscs = btnUploadLicenseDiscs;
+        _btnDownloadHashes = btnDownloadHashes;
+        _txtDeviceId = txtDeviceId;
         _txtMake = txtMake;
         _txtModel = txtModel;
         _txtRegistrationNumber = txtRegistrationNumber;
@@ -84,6 +77,11 @@ public class LicenseDiscService {
             _txtMake.setText(String.format("Make: %s", licenseDisc.make));
             _txtModel.setText(String.format("Model: %s", licenseDisc.model));
         }
+
+        TelephonyManager telephonyManager = (TelephonyManager) _context.getSystemService(Context.TELEPHONY_SERVICE);
+        String deviceId = telephonyManager.getDeviceId();
+
+        _txtDeviceId.setText(String.format("Device Id: %s", deviceId));
     }
 
     public void ProcessScan(String contents) {
@@ -93,7 +91,7 @@ public class LicenseDiscService {
         _txtMake.setText(String.format("Make: %s", licenseDisc.make));
         _txtModel.setText(String.format("Model: %s", licenseDisc.model));
 
-        if (_licenseDiscRepository.Exist(licenseDisc.hash)) {
+        if (_hashRepository.Exist(licenseDisc.hash)) {
             Toast.makeText(_context, "License Disc already exists.",
                     Toast.LENGTH_LONG).show();
         } else {
@@ -103,63 +101,65 @@ public class LicenseDiscService {
     }
 
     public void OnHTTPResponse(String content, int resultCode) {
-        if (resultCode == UPLOAD_RESULT_CODE) {
-            Toast.makeText(_context, "Successfully uploaded database.",
+        if (resultCode == UPLOAD_LICENSE_DISCS_RESULT_CODE) {
+
+            List<LicenseDisc> licenseDiscs = _licenseDiscRepository.List(null);
+
+            for (LicenseDisc licenseDisc : licenseDiscs) {
+                _licenseDiscRepository.MarkAsUploaded(licenseDisc.hash);
+            }
+
+            Toast.makeText(_context, "Successfully uploaded license discs.",
                     Toast.LENGTH_LONG).show();
+        }
+
+        if (resultCode == DOWNLOAD_HASHES_RESULT_CODE) {
+            Gson g = new Gson();
+
+            String[] hashes = g.fromJson(content, String[].class);
+
+            for (String hash : hashes) {
+                if (!_hashRepository.Exist(hash)) {
+                    _hashRepository.Insert(hash);
+                }
+            }
+
+            Toast.makeText(_context, "Successfully downloaded hashes.",
+                    Toast.LENGTH_LONG).show();
+
+            UpdateNumberOfScans();
         }
     }
 
     public void CloseDatabase() {
         _licenseDiscRepository.Close();
+        _hashRepository.Close();
     }
 
     private void UpdateNumberOfScans() {
         long count = _licenseDiscRepository.NumberOfScans();
+        long totalCount = _hashRepository.NumberOfHashes();
 
-        _txtStatisticsNumberOfScans.setText("Number of Scans: " + count);
+        _txtStatisticsNumberOfScans.setText("Number of Scans: " + count + " (" + totalCount + ")");
     }
 
-    private void ExportDatabase() {
-        File src = _context.getDatabasePath(BaseRepository.DATABASE_NAME);
-        File dest = new File(FileHelper.GetExternalStoragePath(String.format("license-disc-scanner-%s.db", new Date().getTime())));
+    private void UploadLicenseDiscs() {
 
-        FileHelper.Copy(src, dest);
-
-        Toast.makeText(_context, "Successfully exported database.",
-                Toast.LENGTH_LONG).show();
-    }
-
-    private void UploadDatabase() {
+        Gson gson = new Gson();
 
         TelephonyManager telephonyManager = (TelephonyManager) _context.getSystemService(Context.TELEPHONY_SERVICE);
         String deviceId = telephonyManager.getDeviceId();
-
-        Gson gson = new Gson();
 
         List<LicenseDisc> licenseDiscs = _licenseDiscRepository.List(deviceId);
 
         String json = gson.toJson(licenseDiscs, new TypeToken<List<LicenseDisc>>() {
         }.getType());
-        _serviceActivity.Post(json, "https://license-disc-scanner.openservices.co.za/licenseDiscs/create", UPLOAD_RESULT_CODE);
+
+        _serviceActivity.Post(json, "https://license-disc-scanner.openservices.co.za/licenseDiscs/create", UPLOAD_LICENSE_DISCS_RESULT_CODE);
     }
 
-    private void RestoreSeedDatabase() {
-        File internalDatabaseFile = _context.getDatabasePath(BaseRepository.DATABASE_NAME);
-
-        try (InputStream initialDatabaseInputStream = _context.getAssets().open("license-disc-scanner.db")) {
-            FileHelper.Copy(initialDatabaseInputStream, internalDatabaseFile);
-
-            Toast.makeText(_context, "Successfully restored seed database.",
-                    Toast.LENGTH_LONG).show();
-
-            _licenseDiscRepository.Close();
-            _licenseDiscRepository = new LicenseDiscRepository(_context);
-
-            UpdateNumberOfScans();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+    private void DownloadHashes() {
+        _serviceActivity.Get("https://license-disc-scanner.openservices.co.za/licenseDiscs/listHashes", DOWNLOAD_HASHES_RESULT_CODE);
     }
 
     private void ConfigureOnClickListeners() {
@@ -170,21 +170,15 @@ public class LicenseDiscService {
             }
         });
 
-        _btnExportDatabase.setOnClickListener(new View.OnClickListener() {
+        _btnUploadLicenseDiscs.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                ExportDatabase();
+                UploadLicenseDiscs();
             }
         });
 
-        _btnUpload.setOnClickListener(new View.OnClickListener() {
+        _btnDownloadHashes.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                UploadDatabase();
-            }
-        });
-
-        _btnRestoreSeedDatabase.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                RestoreSeedDatabase();
+                DownloadHashes();
             }
         });
     }
