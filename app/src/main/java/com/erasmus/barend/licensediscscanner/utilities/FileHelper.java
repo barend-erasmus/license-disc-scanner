@@ -32,6 +32,20 @@ public class FileHelper {
         }
     }
 
+    public static void Copy(InputStream inputStream, File dst) {
+        try (OutputStream outputStream = new FileOutputStream(dst)) {
+            byte[] buf = new byte[1024];
+            int len;
+            while ((len = inputStream.read(buf)) > 0) {
+                outputStream.write(buf, 0, len);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static String GetExternalStoragePath(String path) {
         return JoinPath(GetExternalStoragePath(), path);
     }
